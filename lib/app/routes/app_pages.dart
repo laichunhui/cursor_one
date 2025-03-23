@@ -5,6 +5,8 @@ import '../modules/welcome/welcome_binding.dart';
 import '../modules/welcome/welcome_view.dart';
 import '../modules/photo_detail/photo_detail_binding.dart';
 import '../modules/photo_detail/photo_detail_view.dart';
+import '../modules/friends/friends_binding.dart';
+import '../modules/friends/friends_view.dart';
 
 part 'app_routes.dart';
 
@@ -26,6 +28,11 @@ class AppPages {
       name: Routes.photoDetail,
       page: () => const PhotoDetailView(),
       binding: PhotoDetailBinding(),
+    ),
+    GetPage(
+      name: Routes.friends,
+      page: () => const FriendsView(),
+      binding: FriendsBinding(),
     ),
   ];
 }

@@ -14,6 +14,13 @@ class HomeView extends GetView<HomeController> {
       appBar: AppBar(
         title: const Text('壁纸工具', style: TextStyle(fontSize: 20)),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.people),
+            onPressed: () => Get.toNamed(Routes.friends),
+            tooltip: '好友列表',
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -201,6 +208,11 @@ class HomeView extends GetView<HomeController> {
             }),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Get.toNamed(Routes.friends),
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.people),
       ),
     );
   }

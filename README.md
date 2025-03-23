@@ -16,12 +16,13 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 ## 指令模板
+请参考
+@https://www.figma.com/design/XZ9zQDaZhbB32PhjpToeRX/%E5%A5%BD%E5%8F%8B?node-id=2-10840&t=scmOO5D42KCm0Ksg-4 
+设计稿图片，按如下要求生成代码：
 
-这是 figma 设计稿图片，请按如下要求生成代码：
-
-- @Codebase 这是 flutter 项目
-- 在 lib/pages/msg/msg_index 目录下创建一个消息列表视图
-- 参考 lib/pages 目录下的业务模块代码
+- 功能入口在home添加一个入口按钮
+- 在 lib/app/modules/friends 目录下创建一个好友弹窗视图
+- 参考 lib/app/modules 目录下的业务模块代码
 - 在 view.dart 文件中，使用 Ducafe UI Core 类库作为扩展方式
 - 数据模型写到 model.dart 中，类名后缀 Model
 - 子组件抽取到 widgets/xxx.dart
