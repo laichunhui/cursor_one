@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 /// Unsplash API 响应模型
@@ -32,6 +31,16 @@ class UnsplashService {
   static const String _baseUrl = 'https://api.unsplash.com';
   static const String _clientId =
       '1Xam6YFzMAmHy92-vKgEaK5i5TXUtSDt74IL9rbCg9s'; // 需要替换为实际的 Unsplash Access Key
+  late final Dio _dio;
+
+  UnsplashService() {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: _baseUrl,
+        headers: {'Authorization': 'Client-ID $_clientId'},
+      ),
+    );
+  }
 
   /// 获取随机图片
   ///
@@ -43,17 +52,14 @@ class UnsplashService {
     String query = 'nature',
     String orientation = 'landscape',
   }) async {
-    final response = await http.get(
-      Uri.parse(
-        '$_baseUrl/photos/random?query=$query&orientation=$orientation',
-      ),
-      headers: {'Authorization': 'Client-ID $_clientId'},
-    );
-
-    if (response.statusCode == 200) {
-      return UnsplashPhoto.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to load photo');
+    try {
+      final response = await _dio.get(
+        '/photos/random',
+        queryParameters: {'query': query, 'orientation': orientation},
+      );
+      return UnsplashPhoto.fromJson(response.data);
+    } catch (e) {
+      throw Exception('Failed to load photo: $e');
     }
   }
 }
@@ -89,7 +95,7 @@ class _WelcomePageState extends State<WelcomePage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Failed to load photo')));
+        ).showSnackBar(SnackBar(content: Text('加载图片失败: $e')));
       }
     }
   }
