@@ -6,22 +6,33 @@ import 'package:cached_network_image/cached_network_image.dart';
 class UnsplashPhoto {
   final String id;
   final String url;
+  final String thumbUrl;
   final String photographer;
   final String photographerUrl;
+  final double aspectRatio;
 
   UnsplashPhoto({
     required this.id,
     required this.url,
+    required this.thumbUrl,
     required this.photographer,
     required this.photographerUrl,
+    required this.aspectRatio,
   });
 
   factory UnsplashPhoto.fromJson(Map<String, dynamic> json) {
+    // 计算宽高比
+    final width = json['width'] as int? ?? 0;
+    final height = json['height'] as int? ?? 0;
+    final aspectRatio = width > 0 && height > 0 ? width / height : 1.0;
+
     return UnsplashPhoto(
       id: json['id'],
       url: json['urls']['regular'],
+      thumbUrl: json['urls']['thumb'],
       photographer: json['user']['name'],
       photographerUrl: json['user']['links']['html'],
+      aspectRatio: aspectRatio,
     );
   }
 }

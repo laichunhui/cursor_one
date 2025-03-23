@@ -7,6 +7,7 @@ class UnsplashPhoto {
   final String thumbUrl;
   final String photographer;
   final String photographerUrl;
+  final double aspectRatio;
 
   UnsplashPhoto({
     required this.id,
@@ -14,15 +15,21 @@ class UnsplashPhoto {
     required this.thumbUrl,
     required this.photographer,
     required this.photographerUrl,
+    required this.aspectRatio,
   });
 
   factory UnsplashPhoto.fromJson(Map<String, dynamic> json) {
+    final width = json['width'] as int? ?? 0;
+    final height = json['height'] as int? ?? 0;
+    final aspectRatio = width > 0 && height > 0 ? width / height : 1.0;
+
     return UnsplashPhoto(
       id: json['id'],
       url: json['urls']['regular'],
       thumbUrl: json['urls']['thumb'],
       photographer: json['user']['name'],
       photographerUrl: json['user']['links']['html'],
+      aspectRatio: aspectRatio,
     );
   }
 }

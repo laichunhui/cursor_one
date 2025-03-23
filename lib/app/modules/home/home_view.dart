@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../routes/app_pages.dart';
 import 'home_controller.dart';
 
@@ -91,7 +92,7 @@ class HomeView extends GetView<HomeController> {
               },
             ),
           ),
-          // 图片网格
+          // 图片瀑布流
           Expanded(
             child: Obx(() {
               if (controller.photos.isEmpty && !controller.isLoading.value) {
@@ -106,85 +107,95 @@ class HomeView extends GetView<HomeController> {
                   }
                   return true;
                 },
-                child: GridView.builder(
-                  padding: const EdgeInsets.all(8),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: (MediaQuery.of(context).size.width / 200)
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: MasonryGridView.count(
+                    crossAxisCount: (MediaQuery.of(context).size.width / 180)
                         .floor()
-                        .clamp(3, 5),
-                    childAspectRatio: 1,
-                    crossAxisSpacing: 8,
+                        .clamp(2, 4),
                     mainAxisSpacing: 8,
-                  ),
-                  itemCount:
-                      controller.photos.length +
-                      (controller.hasMore.value ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == controller.photos.length) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black.withAlpha(77),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Center(
-                          child: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
+                    crossAxisSpacing: 8,
+                    itemCount:
+                        controller.photos.length +
+                        (controller.hasMore.value ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == controller.photos.length) {
+                        return Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withAlpha(77),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                               ),
+                            ),
+                          ),
+                        );
+                      }
+
+                      final photo = controller.photos[index];
+                      // 计算比例，让图片显示更自然
+                      double aspectRatio = photo.aspectRatio;
+
+                      return GestureDetector(
+                        onTap:
+                            () => Get.toNamed(
+                              Routes.photoDetail,
+                              arguments: {'photo': photo},
+                            ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: AspectRatio(
+                            aspectRatio: aspectRatio,
+                            child: CachedNetworkImage(
+                              imageUrl: photo.url,
+                              fit: BoxFit.cover,
+                              placeholder:
+                                  (context, url) => Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withAlpha(77),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Center(
+                                      child: SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                Colors.white,
+                                              ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              errorWidget:
+                                  (context, url, error) => Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withAlpha(77),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Icon(
+                                      Icons.error,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
+                                  ),
                             ),
                           ),
                         ),
                       );
-                    }
-
-                    final photo = controller.photos[index];
-                    return GestureDetector(
-                      onTap:
-                          () => Get.toNamed(
-                            Routes.photoDetail,
-                            arguments: {'photo': photo},
-                          ),
-                      child: CachedNetworkImage(
-                        imageUrl: photo.url,
-                        fit: BoxFit.cover,
-                        placeholder:
-                            (context, url) => Container(
-                              decoration: BoxDecoration(
-                                color: Colors.black.withAlpha(77),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Center(
-                                child: SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                        errorWidget:
-                            (context, url, error) => Container(
-                              decoration: BoxDecoration(
-                                color: Colors.black.withAlpha(77),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(
-                                Icons.error,
-                                color: Colors.white,
-                                size: 24,
-                              ),
-                            ),
-                      ),
-                    );
-                  },
+                    },
+                  ),
                 ),
               );
             }),
